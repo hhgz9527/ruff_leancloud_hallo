@@ -1,5 +1,5 @@
 'use strict';
-var AV = require('leanengine')
+var AV = require('avoscloud-sdk')
 
 $.ready(function (error) {
     if (error) {
@@ -7,6 +7,7 @@ $.ready(function (error) {
         return;
     }
 
+    console.log("about to initialize av apis");
     AV.initialize("Dvkub2eLIXlbDelynl7X6MGH", "LBSzvrBgTeErPiG4gXv1wcre", "gRAL5pQMmpAgx16qn0GSK0T1");
     var Record = AV.Object.extend('RuffRecord');
     var record = new Record();
@@ -30,6 +31,6 @@ $.end(function () {
     }, function(err) {
 	console.log('failed to create end record. bcz: ' + err.message)
     });
- 
+
     $('led-r').turnOff();
 });

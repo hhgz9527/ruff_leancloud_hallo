@@ -1,5 +1,1 @@
-'use strict';
-
-var AV = require('./AV');
-
-global.AV = AV;
+"use strict";var AV=require("./av");global.AV=AV._.extend(AV,global.AV);
