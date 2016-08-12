@@ -1,5 +1,10 @@
 {
     "models": [],
+    "args": {
+        "frequency": {
+            "type": "number"
+        }
+    },
     "inputs": {
         "i2c": {
             "type": "i2c",
@@ -13,76 +18,28 @@
     },
     "outputs": {
         "pwm-0": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-1": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-2": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-3": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-4": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-5": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-6": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         },
         "pwm-7": {
-            "type": "pwm",
-            "args": {
-                "frequency": {
-                    "type": "number",
-                    "default": 200
-                }
-            }
+            "type": "pwm"
         }
     }
 }

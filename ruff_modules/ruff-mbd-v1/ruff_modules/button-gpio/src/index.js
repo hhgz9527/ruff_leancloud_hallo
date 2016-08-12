@@ -1,3 +1,8 @@
+/*!
+ * Copyright (c) 2016 Nanchao Inc.
+ * All rights reserved.
+ */
+
 'use strict';
 
 var driver = require('ruff-driver');
@@ -7,34 +12,41 @@ var ButtonState = {
     released: 1
 };
 
-module.exports = driver({
-    attach: function(inputs) {
-        var _this = this;
-        this._gpio = inputs.getRequired('gpio');
-        this._currentState = ButtonState.released;
+var prototype = {};
 
-        this._gpio.on('interrupt', function(state) {
-            if (_this._currentState === state) {
+Object.defineProperties(prototype, {
+    pushed: {
+        get: function () {
+            return this._state === ButtonState.pushed;
+        }
+    },
+    released: {
+        get: function () {
+            return this._state === ButtonState.released;
+        }
+    }
+});
+
+module.exports = driver({
+    attach: function (inputs) {
+        var that = this;
+
+        this._gpio = inputs['gpio'];
+        this._state = ButtonState.released;
+
+        this._gpio.on('interrupt', function (state) {
+            if (that._state === state) {
                 return;
             }
 
-            _this._currentState = state;
+            that._state = state;
 
             if (state === ButtonState.pushed) {
-                _this.emit('push');
+                that.emit('push');
             } else {
-                _this.emit('release');
+                that.emit('release');
             }
         });
     },
-    exports: {
-        isPressed: function() {
-            return ButtonState.pushed === this._gpio.read();
-        }
-    },
-
-    events: {
-        push: 'message when button is pushed',
-        release: 'message when button is released'
-    },
+    exports: prototype
 });

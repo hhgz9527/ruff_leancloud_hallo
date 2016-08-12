@@ -8,7 +8,9 @@ $.ready(function (error) {
     }
 
     console.log("about to initialize av apis");
-    AV.initialize("Dvkub2eLIXlbDelynl7X6MGH", "LBSzvrBgTeErPiG4gXv1wcre", "gRAL5pQMmpAgx16qn0GSK0T1");
+    //AV.initialize("Dvkub2eLIXlbDelynl7X6MGH", "LBSzvrBgTeErPiG5gXv1wcre", "gRAL5pQMmpAgx16qn0GSK0T1");
+    AV.initialize("tgUBFfoOq1e9Wn7kJAElNep0-gzGzoHsz", "OA9xvXNvnFtf5A4HENcgosAx");
+    console.log("av apis initialized");
     var Record = AV.Object.extend('RuffRecord');
     var record = new Record();
     record.set('env', 'nothing');
@@ -18,6 +20,7 @@ $.ready(function (error) {
     }, function(err) {
 	console.log('failed to create start record. bcz: ' + err.message)
     });
+    console.log("data saved");
     $('led-r').turnOn();
 });
 

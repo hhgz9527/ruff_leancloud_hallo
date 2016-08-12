@@ -1,16 +1,48 @@
+/*!
+ * Copyright (c) 2016 Nanchao Inc.
+ * All rights reserved.
+ */
+
 'use strict';
 
+var async = require('ruff-async');
 var driver = require('ruff-driver');
-var pwm = require('pwm');
+var util = require('util');
 
-var MODE1 = 0;
-var LED0_ON_L = 6;
-var LED0_ON_H = 7;
-var LED0_OFF_L = 8;
-var LED0_OFF_H = 9;
-var ALL_LED_OFF_H = 0xFD;
-var PRE_SCALE = 254;
-var outputsKey = {
+var hasOwnProperty = Object.prototype.hasOwnProperty;
+
+var Mode1 = {
+    restart: 0x80,
+    externalClock: 0x40,
+    autoIncrement: 0x20,
+    sleep: 0x10,
+    sub1: 0x08,
+    sub2: 0x04,
+    sub3: 0x02,
+    allCall: 0x01
+};
+
+var OSCILLATOR_CLOCK = 25 * 1000 * 1000; // 25MHz
+var COUNTER_END = 4096;
+
+var MODE_REGISTER_1 = 0x00;
+var MODE_1_DEFAULT = Mode1.sleep | Mode1.allCall;
+
+var OUTPUT_0 = 0x06;
+
+var ON_LOW_OFFSET = 0;
+var ON_HIGH_OFFSET = 1;
+var OFF_LOW_OFFSET = 2;
+var OFF_HIGH_OFFSET = 3;
+
+var ALL_LED_OFF_H = 0xfd;
+var PRE_SCALE = 0xfe;
+
+function GET_PRESCALE_VALUE(frequency) {
+    return Math.round(OSCILLATOR_CLOCK / (COUNTER_END * frequency)) - 1;
+}
+
+var OUTPUT_INDEX_MAP = {
     'pwm-0': 0,
     'pwm-1': 1,
     'pwm-2': 2,
@@ -21,56 +53,164 @@ var outputsKey = {
     'pwm-7': 7
 };
 
-function setFrequency(freq, pca) {
-    var prescale = Math.round(25000000 / (freq * 4096)) - 1;
-    var oldMode = pca._i2c.readByte(MODE1) & 0x7f;
-    var newMode = oldMode | 0x10;
-    pca._i2c.writeByte(MODE1, newMode);
-    pca._i2c.writeByte(PRE_SCALE, prescale);
-    pca._i2c.writeByte(MODE1, oldMode);
-}
+var Overwrite = {
+    ignore: 0,
+    force: 1,
+    never: 2
+};
 
-function setDuty(i2c, channel, pulseon, pulseoff) {
-    i2c.writeByte(LED0_ON_L + 4 * channel, pulseon & 0xFF);
-    i2c.writeByte(LED0_ON_H + 4 * channel, pulseon >> 8);
-    i2c.writeByte(LED0_OFF_L + 4 * channel, pulseoff & 0xFF);
-    i2c.writeByte(LED0_OFF_H + 4 * channel, pulseoff >> 8);
-}
+function I2cPwmInterface(device, index, options, callback) {
+    var that = this;
 
-function getChannel(channel, adapter) {
-    return pwm.driver({
-        attach: function() {
-            this._channel = channel;
-            this._adapter = adapter;
-        },
+    this._device = device;
+    this._index = index;
 
-        exports: {
-            setFrequency: function(freq) {
-                setFrequency(freq, this._adapter);
-            },
+    var frequency;
+    var overwrite;
 
-            setDuty: function(rate) {
-                setDuty(this._adapter._i2c, this._channel, 0, rate * 4096);
-            }
+    if (typeof options.frequency === 'number') {
+        frequency = options.frequency;
+        overwrite = Overwrite.never;
+    } else {
+        frequency = 200;
+        overwrite = Overwrite.ignore;
+    }
+
+    async.series([
+        device.setFrequency.bind(device, frequency, overwrite),
+        this.setDuty.bind(this, options.duty || 0)
+    ], function (error) {
+        if (error) {
+            callback(error);
+            return;
         }
+
+        callback(undefined, that);
     });
 }
 
-module.exports = driver({
-    attach: function(inputs) {
-        this._i2c = inputs.getRequired('i2c');
-        this._i2c.writeByte(MODE1, 0x80);
-        this._i2c.writeByte(ALL_LED_OFF_H, 0x10);
-    },
+/**
+ * @param {number} duty
+ * @param {Function} [callback]
+ */
+I2cPwmInterface.prototype.setDuty = function (duty, callback) {
+    this._device.setDuty(this._index, duty, callback);
+};
 
-    getDevice: function(key, options) {
-        var freq = options.getRequired('frequency');
-        setFrequency(freq, this);
-        var channel = outputsKey[key];
-        if (channel === undefined) {
-            throw new Error('channel must in [pwm-0, pwm-1, pwm-2, pwm-3, pwm-4, pwm-5, pwm-6, pwm-7]');
+/**
+ * @param {number} frequency
+ * @param {Function} [callback]
+ */
+I2cPwmInterface.prototype.setFrequency = function (frequency, callback) {
+    this._device.setFrequency(frequency, Overwrite.never, callback);
+};
+
+I2cPwmInterface.get = function (device, index, options, callback) {
+    new I2cPwmInterface(device, index, options, callback);
+};
+
+module.exports = driver({
+    attach: function (inputs, context, next) {
+        this.id = context.id;
+
+        this._i2c = inputs['i2c'];
+        this._interfaceMap = Object.create(null);
+
+        var frequency = context.args.frequency;
+
+        if (typeof frequency === 'number') {
+            this.setFrequency(frequency, next);
+        } else {
+            next();
         }
-        var PwmClass = getChannel(outputsKey[key], this);
-        return new PwmClass(options);
+    },
+    detach: function () {
+        this.allOff();
+    },
+    getInterface: function (name, options, callback) {
+        util.assertCallback(callback);
+
+        var interfaceMap = this._interfaceMap;
+
+        if (name in interfaceMap) {
+            util.invokeCallbackAsync(callback, undefined, interfaceMap[name]);
+            return;
+        }
+
+        if (!hasOwnProperty.call(OUTPUT_INDEX_MAP, name)) {
+            throw new Error('Invalid interface name "' + name + '"');
+        }
+
+        var index = OUTPUT_INDEX_MAP[name];
+
+        I2cPwmInterface.get(this, index, options, function (error, pwmInterface) {
+            if (error) {
+                callback(error);
+                return;
+            }
+
+            interfaceMap[name] = pwmInterface;
+            callback(undefined, pwmInterface);
+        });
+    },
+    exports: {
+        /**
+         * @param {number} frequency
+         * @param {boolean} [overwrite=Overwrite.force]
+         * @param {Function} [callback]
+         */
+        setFrequency: function (frequency, overwrite, callback) {
+            if (typeof overwrite === 'function') {
+                callback = overwrite;
+                overwrite = Overwrite.force;
+            } else if (overwrite === undefined) {
+                overwrite = Overwrite.force;
+            }
+
+            if (typeof this._frequency === 'number') {
+                if (this._frequency === frequency || overwrite === Overwrite.ignore) {
+                    // TODO: queue and ensure this callback is called after setting completes.
+                    util.invokeCallbackAsync(callback);
+                    return;
+                }
+
+                if (overwrite === Overwrite.never) {
+                    throw new Error('The frequency of device "' + this.id + '" has already been set to a different value');
+                }
+            }
+
+            this._frequency = frequency;
+
+            // eslint-disable-next-line new-cap
+            var preScale = GET_PRESCALE_VALUE(frequency);
+
+            var i2c = this._i2c;
+
+            // The PRE_SCALE register can only be set when the SLEEP bit of MODE1 register is set to logic 1.
+            i2c.writeByte(MODE_REGISTER_1, MODE_1_DEFAULT);
+            i2c.writeByte(PRE_SCALE, preScale);
+            i2c.writeByte(MODE_REGISTER_1, MODE_1_DEFAULT & ~Mode1.sleep, callback);
+        },
+        /**
+         * @param {number} index
+         * @param {number} duty 0 ~ 1
+         * @param {Function} [callback]
+         */
+        setDuty: function (index, duty, callback) {
+            var i2c = this._i2c;
+
+            var count = Math.round(duty * (COUNTER_END - 1));
+
+            i2c.writeByte(OUTPUT_0 + ON_LOW_OFFSET + 4 * index, 0);
+            i2c.writeByte(OUTPUT_0 + ON_HIGH_OFFSET + 4 * index, 0);
+            i2c.writeByte(OUTPUT_0 + OFF_LOW_OFFSET + 4 * index, count & 0xff);
+            i2c.writeByte(OUTPUT_0 + OFF_HIGH_OFFSET + 4 * index, count >> 8, callback);
+        },
+        /**
+         * @param {Function} [callback]
+         */
+        allOff: function (callback) {
+            this._i2c.writeByte(ALL_LED_OFF_H, 0x10, callback);
+        }
     }
 });

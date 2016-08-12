@@ -1,18 +1,14 @@
 {
     "models": [],
-    "inputs":
-    {
+    "inputs": {
         "i2c": {
-            "type" : "i2c",
-            "args" : {
-                "address": {
-                    "type": "number",
-                    "default": 36
-                }
+            "type": "i2c",
+            "args": {
+                "address": 36
             }
         },
         "gpio": {
-            "type" : "gpio",
+            "type": "gpio",
             "args": {
                 "direction": "in",
                 "edge": "both"
@@ -20,21 +16,53 @@
         }
     },
     "outputs": {
-        "io-0": {"type": "gpio"},
-        "io-1": {"type": "gpio"},
-        "io-2": {"type": "gpio"},
-        "io-3": {"type": "gpio"},
-        "io-4": {"type": "gpio"},
-        "io-5": {"type": "gpio"},
-        "io-6": {"type": "gpio"},
-        "io-7": {"type": "gpio"},
-        "io-8": {"type": "gpio"},
-        "io-9": {"type": "gpio"},
-        "io-10": {"type": "gpio"},
-        "io-11": {"type": "gpio"},
-        "io-12": {"type": "gpio"},
-        "io-13": {"type": "gpio"},
-        "io-14": {"type": "gpio"},
-        "io-15": {"type": "gpio"}
+        "io-0": {
+            "type": "gpio"
+        },
+        "io-1": {
+            "type": "gpio"
+        },
+        "io-2": {
+            "type": "gpio"
+        },
+        "io-3": {
+            "type": "gpio"
+        },
+        "io-4": {
+            "type": "gpio"
+        },
+        "io-5": {
+            "type": "gpio"
+        },
+        "io-6": {
+            "type": "gpio"
+        },
+        "io-7": {
+            "type": "gpio"
+        },
+        "io-8": {
+            "type": "gpio"
+        },
+        "io-9": {
+            "type": "gpio"
+        },
+        "io-10": {
+            "type": "gpio"
+        },
+        "io-11": {
+            "type": "gpio"
+        },
+        "io-12": {
+            "type": "gpio"
+        },
+        "io-13": {
+            "type": "gpio"
+        },
+        "io-14": {
+            "type": "gpio"
+        },
+        "io-15": {
+            "type": "gpio"
+        }
     }
 }
