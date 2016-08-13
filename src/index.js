@@ -21,7 +21,7 @@ $.ready(function (error) {
 	console.log('failed to create start record. bcz: ' + err.message)
     });
     console.log("data saved");
-    $('led-r').turnOn();
+    $('#led-r').turnOn();
 });
 
 $.end(function () {
@@ -35,5 +35,5 @@ $.end(function () {
 	console.log('failed to create end record. bcz: ' + err.message)
     });
 
-    $('led-r').turnOff();
+    $('#led-r').turnOff();
 });
