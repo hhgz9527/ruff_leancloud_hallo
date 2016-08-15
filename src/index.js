@@ -7,6 +7,7 @@ $.ready(function (error) {
         return;
     }
 
+    $('#led-r').turnOn();
     console.log("about to initialize av apis");
     //AV.initialize("Dvkub2eLIXlbDelynl7X6MGH", "LBSzvrBgTeErPiG5gXv1wcre", "gRAL5pQMmpAgx16qn0GSK0T1");
     AV.initialize("tgUBFfoOq1e9Wn7kJAElNep0-gzGzoHsz", "OA9xvXNvnFtf5A4HENcgosAx");

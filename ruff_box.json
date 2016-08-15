@@ -1,5 +1,52 @@
 {
     "version": "0.1.0",
+    "preloads": {
+        "uart-0": "uart-0/uart",
+        "gpio-0": "gpio-0/gpio",
+        "gpio-11": "gpio-11/gpio",
+        "gpio-12": "gpio-12/gpio",
+        "gpio-13": "gpio-13/gpio",
+        "gpio-14": "gpio-14/gpio",
+        "gpio-17": "gpio-17/gpio",
+        "gpio-18": "gpio-18/gpio",
+        "gpio-19": "gpio-19/gpio",
+        "gpio-22": "gpio-22/gpio",
+        "gpio-23": "gpio-23/gpio",
+        "gpio-24": "gpio-24/gpio",
+        "gpio-26": "gpio-26/gpio",
+        "io-0": "gpio-plus/io-0",
+        "io-1": "gpio-plus/io-1",
+        "io-2": "gpio-plus/io-2",
+        "io-3": "gpio-plus/io-3",
+        "io-4": "gpio-plus/io-4",
+        "io-5": "gpio-plus/io-5",
+        "io-6": "gpio-plus/io-6",
+        "io-7": "gpio-plus/io-7",
+        "io-8": "gpio-plus/io-8",
+        "io-9": "gpio-plus/io-9",
+        "io-10": "gpio-plus/io-10",
+        "io-11": "gpio-plus/io-11",
+        "io-12": "gpio-plus/io-12",
+        "io-13": "gpio-plus/io-13",
+        "io-14": "gpio-plus/io-14",
+        "io-15": "gpio-plus/io-15",
+        "an-0": "ruff-adc/an-0",
+        "an-1": "ruff-adc/an-1",
+        "an-2": "ruff-adc/an-2",
+        "an-3": "ruff-adc/an-3",
+        "an-4": "ruff-adc/an-4",
+        "an-5": "ruff-adc/an-5",
+        "an-6": "ruff-adc/an-6",
+        "an-7": "ruff-adc/an-7",
+        "pwm-0": "ruff-pwm/pwm-0",
+        "pwm-1": "ruff-pwm/pwm-1",
+        "pwm-2": "ruff-pwm/pwm-2",
+        "pwm-3": "ruff-pwm/pwm-3",
+        "pwm-4": "ruff-pwm/pwm-4",
+        "pwm-5": "ruff-pwm/pwm-5",
+        "pwm-6": "ruff-pwm/pwm-6",
+        "pwm-7": "ruff-pwm/pwm-7"
+    },
     "devices": [
         {
             "id": "i2c-0",
@@ -17,8 +64,25 @@
                 "i2c": {
                     "type": "i2c"
                 }
+            }
+        },
+        {
+            "id": "uart-0",
+            "model": "ruff-sys-uart",
+            "driver": "sys-uart",
+            "inputs": {
+                "device": {
+                    "type": "string",
+                    "args": {
+                        "path": "/dev/ttyS0"
+                    }
+                }
             },
-            "internal": true
+            "outputs": {
+                "uart": {
+                    "type": "uart"
+                }
+            }
         },
         {
             "id": "gpio-0",
@@ -36,8 +100,79 @@
                 "gpio": {
                     "type": "gpio"
                 }
+            }
+        },
+        {
+            "id": "gpio-11",
+            "model": "ruff-gpio",
+            "driver": "sys-gpio",
+            "inputs": {
+                "pin": {
+                    "type": "number",
+                    "args": {
+                        "pin": 11
+                    }
+                }
             },
-            "internal": true
+            "outputs": {
+                "gpio": {
+                    "type": "gpio"
+                }
+            }
+        },
+        {
+            "id": "gpio-12",
+            "model": "ruff-gpio",
+            "driver": "sys-gpio",
+            "inputs": {
+                "pin": {
+                    "type": "number",
+                    "args": {
+                        "pin": 12
+                    }
+                }
+            },
+            "outputs": {
+                "gpio": {
+                    "type": "gpio"
+                }
+            }
+        },
+        {
+            "id": "gpio-13",
+            "model": "ruff-gpio",
+            "driver": "sys-gpio",
+            "inputs": {
+                "pin": {
+                    "type": "number",
+                    "args": {
+                        "pin": 13
+                    }
+                }
+            },
+            "outputs": {
+                "gpio": {
+                    "type": "gpio"
+                }
+            }
+        },
+        {
+            "id": "gpio-14",
+            "model": "ruff-gpio",
+            "driver": "sys-gpio",
+            "inputs": {
+                "pin": {
+                    "type": "number",
+                    "args": {
+                        "pin": 14
+                    }
+                }
+            },
+            "outputs": {
+                "gpio": {
+                    "type": "gpio"
+                }
+            }
         },
         {
             "id": "gpio-17",
@@ -55,8 +190,25 @@
                 "gpio": {
                     "type": "gpio"
                 }
+            }
+        },
+        {
+            "id": "gpio-18",
+            "model": "ruff-gpio",
+            "driver": "sys-gpio",
+            "inputs": {
+                "pin": {
+                    "type": "number",
+                    "args": {
+                        "pin": 18
+                    }
+                }
             },
-            "internal": true
+            "outputs": {
+                "gpio": {
+                    "type": "gpio"
+                }
+            }
         },
         {
             "id": "gpio-19",
@@ -74,8 +226,7 @@
                 "gpio": {
                     "type": "gpio"
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "gpio-22",
@@ -93,8 +244,7 @@
                 "gpio": {
                     "type": "gpio"
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "gpio-23",
@@ -112,8 +262,7 @@
                 "gpio": {
                     "type": "gpio"
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "gpio-24",
@@ -131,8 +280,180 @@
                 "gpio": {
                     "type": "gpio"
                 }
+            }
+        },
+        {
+            "id": "gpio-26",
+            "model": "ruff-gpio",
+            "driver": "sys-gpio",
+            "inputs": {
+                "pin": {
+                    "type": "number",
+                    "args": {
+                        "pin": 26
+                    }
+                }
             },
-            "internal": true
+            "outputs": {
+                "gpio": {
+                    "type": "gpio"
+                }
+            }
+        },
+        {
+            "id": "gpio-plus",
+            "model": "ruff-gpio",
+            "driver": "mcp23017",
+            "inputs": {
+                "i2c": {
+                    "type": "i2c",
+                    "args": {
+                        "address": 36
+                    },
+                    "bind": "i2c-0/i2c"
+                },
+                "gpio": {
+                    "type": "gpio",
+                    "bind": "gpio-0/gpio",
+                    "args": {
+                        "direction": "in",
+                        "edge": "both"
+                    }
+                }
+            },
+            "outputs": {
+                "io-0": {
+                    "type": "gpio"
+                },
+                "io-1": {
+                    "type": "gpio"
+                },
+                "io-2": {
+                    "type": "gpio"
+                },
+                "io-3": {
+                    "type": "gpio"
+                },
+                "io-4": {
+                    "type": "gpio"
+                },
+                "io-5": {
+                    "type": "gpio"
+                },
+                "io-6": {
+                    "type": "gpio"
+                },
+                "io-7": {
+                    "type": "gpio"
+                },
+                "io-8": {
+                    "type": "gpio"
+                },
+                "io-9": {
+                    "type": "gpio"
+                },
+                "io-10": {
+                    "type": "gpio"
+                },
+                "io-11": {
+                    "type": "gpio"
+                },
+                "io-12": {
+                    "type": "gpio"
+                },
+                "io-13": {
+                    "type": "gpio"
+                },
+                "io-14": {
+                    "type": "gpio"
+                },
+                "io-15": {
+                    "type": "gpio"
+                }
+            }
+        },
+        {
+            "id": "ruff-adc",
+            "model": "ruff-adc",
+            "driver": "ltc2309",
+            "args": {
+                "referenceVoltage": 5
+            },
+            "inputs": {
+                "i2c": {
+                    "type": "i2c",
+                    "args": {
+                        "address": 8
+                    },
+                    "bind": "i2c-0/i2c"
+                }
+            },
+            "outputs": {
+                "an-0": {
+                    "type": "adc"
+                },
+                "an-1": {
+                    "type": "adc"
+                },
+                "an-2": {
+                    "type": "adc"
+                },
+                "an-3": {
+                    "type": "adc"
+                },
+                "an-4": {
+                    "type": "adc"
+                },
+                "an-5": {
+                    "type": "adc"
+                },
+                "an-6": {
+                    "type": "adc"
+                },
+                "an-7": {
+                    "type": "adc"
+                }
+            }
+        },
+        {
+            "id": "ruff-pwm",
+            "model": "ruff-pwm",
+            "driver": "pca9685",
+            "inputs": {
+                "i2c": {
+                    "type": "i2c",
+                    "args": {
+                        "address": 85
+                    },
+                    "bind": "i2c-0/i2c"
+                }
+            },
+            "outputs": {
+                "pwm-0": {
+                    "type": "pwm"
+                },
+                "pwm-1": {
+                    "type": "pwm"
+                },
+                "pwm-2": {
+                    "type": "pwm"
+                },
+                "pwm-3": {
+                    "type": "pwm"
+                },
+                "pwm-4": {
+                    "type": "pwm"
+                },
+                "pwm-5": {
+                    "type": "pwm"
+                },
+                "pwm-6": {
+                    "type": "pwm"
+                },
+                "pwm-7": {
+                    "type": "pwm"
+                }
+            }
         },
         {
             "id": "led-r",
@@ -141,10 +462,13 @@
             "inputs": {
                 "gpio": {
                     "type": "gpio",
-                    "bind": "gpio-22/gpio"
+                    "bind": "gpio-22/gpio",
+                    "args": {
+                        "direction": "out",
+                        "level": "low"
+                    }
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "led-g",
@@ -153,10 +477,13 @@
             "inputs": {
                 "gpio": {
                     "type": "gpio",
-                    "bind": "gpio-23/gpio"
+                    "bind": "gpio-23/gpio",
+                    "args": {
+                        "direction": "out",
+                        "level": "low"
+                    }
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "led-b",
@@ -165,10 +492,13 @@
             "inputs": {
                 "gpio": {
                     "type": "gpio",
-                    "bind": "gpio-24/gpio"
+                    "bind": "gpio-24/gpio",
+                    "args": {
+                        "direction": "out",
+                        "level": "low"
+                    }
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "button-k2",
@@ -182,8 +512,7 @@
                         "edge": "both"
                     }
                 }
-            },
-            "internal": true
+            }
         },
         {
             "id": "button-k3",
@@ -197,8 +526,7 @@
                         "edge": "both"
                     }
                 }
-            },
-            "internal": true
+            }
         }
     ]
 }
