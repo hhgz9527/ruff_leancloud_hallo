@@ -42,9 +42,11 @@
     return Object.keys(this)[i];
   };
 
+  /*
   db.prototype.__defineGetter__('length', function () {
     return Object.keys(this).length;
   });
+  */
 
   if (global.localStorage) {
     module.exports = localStorage;

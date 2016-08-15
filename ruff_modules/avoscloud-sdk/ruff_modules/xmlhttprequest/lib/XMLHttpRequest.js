@@ -12,7 +12,7 @@
  */
 
 var Url = require("url")
-  , spawn = require("child_process").spawn
+//  , spawn = require("child_process").spawn
   , fs = require('fs');
 
 exports.XMLHttpRequest = function() {
@@ -480,14 +480,14 @@ exports.XMLHttpRequest = function() {
         + (data ? "req.write('" + data.replace(/'/g, "\\'") + "');":"")
         + "req.end();";
       // Start the other Node Process, executing this string
-      var syncProc = spawn(process.argv[0], ["-e", execString]);
+//      var syncProc = spawn(process.argv[0], ["-e", execString]);
       var statusText;
       while(fs.existsSync(syncFile)) {
         // Wait while the sync file is empty
       }
       self.responseText = fs.readFileSync(contentFile, 'utf8');
       // Kill the child process once the file has data
-      syncProc.stdin.end();
+//      syncProc.stdin.end();
       // Remove the temporary file
       fs.unlinkSync(contentFile);
       if (self.responseText.match(/^NODE-XMLHTTPREQUEST-ERROR:/)) {

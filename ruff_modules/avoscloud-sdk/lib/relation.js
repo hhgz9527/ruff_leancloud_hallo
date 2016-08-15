@@ -1,1 +1,115 @@
-"use strict";var _=require("underscore");module.exports=function(e){e.Relation=function(e,t){if(!_.isString(t))throw new TypeError("key must be a string");this.parent=e,this.key=t,this.targetClassName=null},e.Relation.reverseQuery=function(t,r,a){var s=new e.Query(t);return s.equalTo(r,a._toPointer()),s},e.Relation.prototype={_ensureParentAndKey:function(e,t){if(this.parent=this.parent||e,this.key=this.key||t,this.parent!==e)throw"Internal Error. Relation retrieved from two different Objects.";if(this.key!==t)throw"Internal Error. Relation retrieved from two different keys."},add:function(t){_.isArray(t)||(t=[t]);var r=new e.Op.Relation(t,[]);this.parent.set(this.key,r),this.targetClassName=r._targetClassName},remove:function(t){_.isArray(t)||(t=[t]);var r=new e.Op.Relation([],t);this.parent.set(this.key,r),this.targetClassName=r._targetClassName},toJSON:function(){return{__type:"Relation",className:this.targetClassName}},query:function t(){var r,t;return this.targetClassName?(r=e.Object._getSubclass(this.targetClassName),t=new e.Query(r)):(r=e.Object._getSubclass(this.parent.className),t=new e.Query(r),t._extraOptions.redirectClassNameForKey=this.key),t._addCondition("$relatedTo","object",this.parent._toPointer()),t._addCondition("$relatedTo","key",this.key),t}}};
+'use strict';
+var _ = require('underscore');
+
+module.exports = function(AV) {
+  /**
+   * Creates a new Relation for the given parent object and key. This
+   * constructor should rarely be used directly, but rather created by
+   * AV.Object.relation.
+   * @param {AV.Object} parent The parent of this relation.
+   * @param {String} key The key for this relation on the parent.
+   * @see AV.Object#relation
+   * @class
+   *
+   * <p>
+   * A class that is used to access all of the children of a many-to-many
+   * relationship.  Each instance of AV.Relation is associated with a
+   * particular parent object and key.
+   * </p>
+   */
+  AV.Relation = function(parent, key) {
+    if (! _.isString(key)) {
+      throw new TypeError('key must be a string');
+    }
+    this.parent = parent;
+    this.key = key;
+    this.targetClassName = null;
+  };
+
+  /**
+   * Creates a query that can be used to query the parent objects in this relation.
+   * @param {String} parentClass The parent class or name.
+   * @param {String} relationKey The relation field key in parent.
+   * @param {AV.Object} child The child object.
+   * @return {AV.Query}
+   */
+  AV.Relation.reverseQuery = function(parentClass, relationKey, child){
+    var query = new AV.Query(parentClass);
+    query.equalTo(relationKey, child._toPointer());
+    return query;
+  };
+
+  AV.Relation.prototype = {
+    /**
+     * Makes sure that this relation has the right parent and key.
+     */
+    _ensureParentAndKey: function(parent, key) {
+      this.parent = this.parent || parent;
+      this.key = this.key || key;
+      if (this.parent !== parent) {
+        throw "Internal Error. Relation retrieved from two different Objects.";
+      }
+      if (this.key !== key) {
+        throw "Internal Error. Relation retrieved from two different keys.";
+      }
+    },
+
+    /**
+     * Adds a AV.Object or an array of AV.Objects to the relation.
+     * @param {} objects The item or items to add.
+     */
+    add: function(objects) {
+      if (!_.isArray(objects)) {
+        objects = [objects];
+      }
+
+      var change = new AV.Op.Relation(objects, []);
+      this.parent.set(this.key, change);
+      this.targetClassName = change._targetClassName;
+    },
+
+    /**
+     * Removes a AV.Object or an array of AV.Objects from this relation.
+     * @param {} objects The item or items to remove.
+     */
+    remove: function(objects) {
+      if (!_.isArray(objects)) {
+        objects = [objects];
+      }
+
+      var change = new AV.Op.Relation([], objects);
+      this.parent.set(this.key, change);
+      this.targetClassName = change._targetClassName;
+    },
+
+    /**
+     * Returns a JSON version of the object suitable for saving to disk.
+     * @return {Object}
+     */
+    toJSON: function() {
+      return { "__type": "Relation", "className": this.targetClassName };
+    },
+
+    /**
+     * Returns a AV.Query that is limited to objects in this
+     * relation.
+     * @return {AV.Query}
+     */
+    query: function() {
+      var targetClass;
+      var query;
+      if (!this.targetClassName) {
+        targetClass = AV.Object._getSubclass(this.parent.className);
+        query = new AV.Query(targetClass);
+        query._extraOptions.redirectClassNameForKey = this.key;
+      } else {
+        targetClass = AV.Object._getSubclass(this.targetClassName);
+        query = new AV.Query(targetClass);
+      }
+      query._addCondition("$relatedTo", "object", this.parent._toPointer());
+      query._addCondition("$relatedTo", "key", this.key);
+
+      return query;
+    }
+  };
+};

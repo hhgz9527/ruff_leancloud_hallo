@@ -1,1 +1,3 @@
-"use strict";module.exports="js1.0.0-rc7";
+'use strict';
+
+module.exports = "js0.6.10";

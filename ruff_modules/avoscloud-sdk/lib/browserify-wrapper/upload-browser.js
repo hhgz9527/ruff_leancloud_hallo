@@ -22,11 +22,13 @@ module.exports = function upload(file, AV, saveOptions) {
     var promise = new AV.Promise();
     var handled = false;
 
-    var xhr = new XMLHttpRequest();
+    var xhr = new AV.XMLHttpRequest();
 
-    if (xhr.upload) {
-      xhr.upload.onprogress = saveOptions.onProgress;
-    }
+    xhr.upload.addEventListener('progress', function(e) {
+      if (e.lengthComputable) {
+        saveOptions.onProgress && saveOptions.onProgress(e);
+      }
+    }, false);
 
     xhr.onreadystatechange = function() {
       if (xhr.readyState === 4) {
